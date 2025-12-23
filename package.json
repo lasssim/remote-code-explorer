@@ -1,0 +1,19 @@
+{
+  "name": "remote-code-explorer",
+  "version": "0.1.0",
+  "description": "A web-based file explorer and git changes viewer",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "file-explorer",
+    "git",
+    "diff-viewer"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}
