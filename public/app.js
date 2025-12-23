@@ -21,7 +21,7 @@ async function fetchGitStatus() {
 }
 
 async function fetchFileDiff(filepath) {
-  const response = await fetch(`/api/git/diff?file=${encodeURIComponent(filepath)}`);
+  const response = await fetch(`/api/git/diff?path=${encodeURIComponent(filepath)}`);
   const data = await response.json();
   return data;
 }

@@ -57,5 +57,5 @@ remote-code-explorer/
 
 - `GET /api/files` - Returns the file tree structure
 - `GET /api/git/status` - Returns git status (modified/added/deleted files)
-- `GET /api/git/diff?file=<path>` - Returns diff for a specific file
+- `GET /api/git/diff?path=<path>` - Returns diff for a specific file
 - `GET /api/file/content?path=<path>` - Returns file content

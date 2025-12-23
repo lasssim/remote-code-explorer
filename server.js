@@ -10,6 +10,27 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT || 3000;
+const PROJECT_ROOT = process.cwd();
+
+// Helper to validate and sanitize file paths
+function validateAndSanitizePath(filepath) {
+  // Normalize the path to remove .. and other problematic patterns
+  const normalized = path.normalize(filepath).replace(/^(\.\.(\/|\\|$))+/, '');
+  const resolved = path.resolve(PROJECT_ROOT, normalized);
+  
+  // Ensure the resolved path is within the project root
+  if (!resolved.startsWith(PROJECT_ROOT)) {
+    throw new Error('Access denied: Path is outside project directory');
+  }
+  
+  return resolved;
+}
+
+// Helper to escape shell arguments
+function escapeShellArg(arg) {
+  // Replace single quotes with '\'' and wrap in single quotes
+  return `'${arg.replace(/'/g, "'\\''")}'`;
+}
 
 // Helper to get MIME types
 function getMimeType(filepath) {
@@ -109,13 +130,17 @@ async function getGitStatus() {
 
 async function getFileDiff(filepath) {
   try {
+    // Validate and sanitize the file path
+    const safePath = validateAndSanitizePath(filepath);
+    const escapedPath = escapeShellArg(filepath);
+    
     // Try to get diff for the file
-    let command = `git diff HEAD -- "${filepath}"`;
+    let command = `git diff HEAD -- ${escapedPath}`;
     
     // If file is untracked, show the full content
-    const { stdout: statusOut } = await execAsync(`git status --porcelain "${filepath}"`);
+    const { stdout: statusOut } = await execAsync(`git status --porcelain ${escapedPath}`);
     if (statusOut.startsWith('??')) {
-      const content = await fs.readFile(filepath, 'utf-8');
+      const content = await fs.readFile(safePath, 'utf-8');
       return { 
         diff: `--- /dev/null\n+++ b/${filepath}\n` + 
               content.split('\n').map(line => '+' + line).join('\n'),
@@ -132,8 +157,9 @@ async function getFileDiff(filepath) {
 
 async function getFileContent(filepath) {
   try {
-    const fullPath = path.resolve(process.cwd(), filepath);
-    const content = await fs.readFile(fullPath, 'utf-8');
+    // Validate and sanitize the file path
+    const safePath = validateAndSanitizePath(filepath);
+    const content = await fs.readFile(safePath, 'utf-8');
     return { content };
   } catch (error) {
     return { content: '', error: error.message };
@@ -170,10 +196,10 @@ async function handleRequest(req, res) {
   }
   
   if (url.pathname === '/api/git/diff') {
-    const filepath = url.searchParams.get('file');
+    const filepath = url.searchParams.get('path');
     if (!filepath) {
       res.writeHead(400, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'File parameter is required' }));
+      res.end(JSON.stringify({ error: 'Path parameter is required' }));
       return;
     }
     
