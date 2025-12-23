@@ -333,11 +333,49 @@ async function init() {
     
     // Set up refresh button
     document.getElementById('refresh-git').addEventListener('click', loadGitChanges);
+    
+    // Set up mobile menu toggle
+    setupMobileMenu();
   } catch (error) {
     console.error('Initialization error:', error);
     document.getElementById('file-tree').innerHTML = 
       `<div class="error-message">Error: ${error.message}</div>`;
   }
+}
+
+// Mobile menu functionality
+function setupMobileMenu() {
+  const mobileToggle = document.getElementById('mobile-toggle');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('mobile-overlay');
+  
+  function closeMobileMenu() {
+    sidebar.classList.remove('mobile-open');
+    overlay.classList.remove('active');
+  }
+  
+  function openMobileMenu() {
+    sidebar.classList.add('mobile-open');
+    overlay.classList.add('active');
+  }
+  
+  mobileToggle.addEventListener('click', () => {
+    if (sidebar.classList.contains('mobile-open')) {
+      closeMobileMenu();
+    } else {
+      openMobileMenu();
+    }
+  });
+  
+  overlay.addEventListener('click', closeMobileMenu);
+  
+  // Close mobile menu when a file or change is clicked
+  sidebar.addEventListener('click', (e) => {
+    if (e.target.closest('.tree-item.file') || e.target.closest('.change-item')) {
+      // Delay closing to allow the click to register
+      setTimeout(closeMobileMenu, 100);
+    }
+  });
 }
 
 async function loadGitChanges() {
