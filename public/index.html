@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Remote Code Explorer</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar with File Explorer and Git Changes -->
+    <aside class="sidebar">
+      <!-- File Explorer Section -->
+      <section class="explorer-section">
+        <div class="section-header">
+          <h2>EXPLORER</h2>
+        </div>
+        <div class="section-content">
+          <div id="file-tree" class="file-tree"></div>
+        </div>
+      </section>
+      
+      <!-- Git Changes Section -->
+      <section class="git-section">
+        <div class="section-header">
+          <h2>SOURCE CONTROL</h2>
+          <button id="refresh-git" class="icon-button" title="Refresh">↻</button>
+        </div>
+        <div class="section-content">
+          <div id="changes-list" class="changes-list"></div>
+        </div>
+      </section>
+    </aside>
+    
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="editor-tabs" id="editor-tabs"></div>
+      <div class="editor-area" id="editor-area">
+        <div class="welcome-screen">
+          <h1>Remote Code Explorer</h1>
+          <p>Select a file from the explorer or a change from source control to view its contents.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+  
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
